@@ -407,7 +407,7 @@ function install_suricata() {
     """
 
     # Download etupdate to update Emerging Threats Open IDS rules:
-    pip3 install suricata-update
+    pip3 -q install suricata-update
     mkdir -p "/etc/suricata/rules"
     crontab -l | { cat; echo "15 * * * * sudo /usr/bin/suricata-update --suricata /usr/bin/suricata --suricata-conf /etc/suricata/suricata.yaml -o /etc/suricata/rules/"; } | crontab -
     crontab -l | { cat; echo "15 * * * * /usr/bin/suricatasc -c reload-rules /tmp/suricata-command.socket"; } | crontab -
@@ -472,7 +472,7 @@ function install_yara() {
 
     cd /tmp || return
     git clone --recursive https://github.com/VirusTotal/yara-python
-    pip3 install ./yara-python
+    pip3 -q install ./yara-python
 }
 
 function install_mongo(){
@@ -485,7 +485,7 @@ function install_mongo(){
     apt update 2>/dev/null
     apt install -y -qq libpcre3-dev > /dev/null
     apt install -y mongodb-org
-    pip3 install pymongo -U
+    pip3 -q install pymongo -U
 
     apt install -y ntp
 
@@ -546,7 +546,7 @@ function install_postgresql() {
     sudo apt update -y -qq
     sudo apt -y -qq install libpq-dev postgresql-12 postgresql-client-12 > /dev/null
 
-    pip3 install psycopg2
+    pip3 -q install psycopg2
 }
 
 function dependencies() {
@@ -579,28 +579,28 @@ function dependencies() {
 
     apt -qq install openvpn wireguard -y > /dev/null
     # if broken sudo python -m pip uninstall pip && sudo apt install python-pip --reinstall
-    #pip3 install --upgrade pip
+    #pip3 -q install --upgrade pip
     # /usr/bin/pip
     # from pip import __main__
     # if __name__ == '__main__':
     #     sys.exit(__main__._main())
     #httpreplay not py3
-    pip3 install Pebble bson pymisp cryptography requests[security] pyOpenSSL pefile tldextract imagehash oletools olefile "networkx>=2.1" mixbox capstone PyCrypto voluptuous xmltodict future python-dateutil requests_file "gevent==20.4.0" simplejson pyvmomi pyinstaller maec regex xmltodict -U
-    pip3 install git+https://github.com/doomedraven/sflock.git git+https://github.com/doomedraven/socks5man.git "pyattck>=2.0.2" distorm3 openpyxl git+https://github.com/volatilityfoundation/volatility3 git+https://github.com/DissectMalware/XLMMacroDeobfuscator passlib
+    pip3 -q install Pebble bson pymisp cryptography requests[security] pyOpenSSL pefile tldextract imagehash oletools olefile "networkx>=2.1" mixbox capstone PyCrypto voluptuous xmltodict future python-dateutil requests_file "gevent==20.4.0" simplejson pyvmomi pyinstaller maec regex xmltodict -U
+    pip3 -q install git+https://github.com/doomedraven/sflock.git git+https://github.com/doomedraven/socks5man.git "pyattck>=2.0.2" distorm3 openpyxl git+https://github.com/volatilityfoundation/volatility3 git+https://github.com/DissectMalware/XLMMacroDeobfuscator passlib
     #config parsers
-    pip3 install git+https://github.com/Defense-Cyber-Crime-Center/DC3-MWCP.git git+https://github.com/kevthehermit/RATDecoders.git
+    pip3 -q install git+https://github.com/Defense-Cyber-Crime-Center/DC3-MWCP.git git+https://github.com/kevthehermit/RATDecoders.git
     # re2
     apt install libre2-dev -y -qq
     #re2 for py3
-    pip3 install cython
-    pip3 install git+https://github.com/andreasvc/pyre2.git
+    pip3 -q install cython
+    pip3 -q install git+https://github.com/andreasvc/pyre2.git
 
     #thanks Jurriaan <3
-    pip3 install git+https://github.com/jbremer/peepdf.git
-    pip3 install "matplotlib>=2.2.2" "numpy>=1.15.0" "six>=1.12.0" "statistics>=1.0.3.5"
+    pip3 -q install git+https://github.com/jbremer/peepdf.git
+    pip3 -q install "matplotlib>=2.2.2" "numpy>=1.15.0" "six>=1.12.0" "statistics>=1.0.3.5"
 
-    pip3 install "django>3" git+https://github.com/jsocol/django-ratelimit.git
-    pip3 install sqlalchemy sqlalchemy-utils jinja2 markupsafe bottle chardet pygal rarfile jsbeautifier dpkt nose dnspython pytz requests[socks] python-magic geoip java-random python-whois bs4 pype32-py3 git+https://github.com/kbandla/pydeep.git flask flask-restful flask-sqlalchemy pyvmomi
+    pip3 -q install "django>3" git+https://github.com/jsocol/django-ratelimit.git
+    pip3 -q install sqlalchemy sqlalchemy-utils jinja2 markupsafe bottle chardet pygal rarfile jsbeautifier dpkt nose dnspython pytz requests[socks] python-magic geoip java-random python-whois bs4 pype32-py3 git+https://github.com/kbandla/pydeep.git flask flask-restful flask-sqlalchemy pyvmomi
     apt install -y openjdk-11-jdk-headless -qq > /dev/null
     apt install -y openjdk-8-jdk-headless -qq > /dev/null
 
@@ -696,12 +696,12 @@ EOF
     sudo ./make.sh install
     "
 
-    pip3 install unicorn capstone
+    pip3 -q install unicorn capstone
 }
 
 function install_clamav() {
     apt-get install clamav clamav-daemon clamav-freshclam clamav-unofficial-sigs -y
-    pip3 install -U pyclamd
+    pip3 -q install -U pyclamd
 
     cat >> /usr/share/clamav-unofficial-sigs/conf.d/00-clamav-unofficial-sigs.conf << EOF
 # This file contains user configuration settings for the clamav-unofficial-sigs.sh
@@ -990,7 +990,7 @@ fi
 }
 
 function supervisor() {
-    pip3 install supervisor -U
+    pip3 -q install supervisor -U
     #### Cuckoo Start at boot
 
     if [ ! -d /etc/supervisor/conf.d ]; then
@@ -1147,7 +1147,7 @@ case "$COMMAND" in
     install_suricata
     install_yara
     if [ "$sandbox_version" = "upstream" ]; then
-        pip3 install cuckoo
+        pip3 -q install cuckoo
     else
         install_CAPE
     fi
@@ -1171,7 +1171,7 @@ case "$COMMAND" in
     install_postgresql;;
 'sandbox')
     if [ "$sandbox_version" = "upstream" ]; then
-        pip3 install cuckoo
+        pip3 -q install cuckoo
         print "[*] run cuckoo under cuckoo user, NEVER RUN IT AS ROOT!"
     else
         install_CAPE
