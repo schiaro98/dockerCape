@@ -2,11 +2,10 @@ FROM ubuntu:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -qq -y update && \ 
-apt-get -qq -y upgrade && \
-apt-get -qq -y install apt-utils neofetch > /dev/null
+RUN apt-get -qq -y update /dev/null && \ 
+apt-get -qq -y upgrade > /dev/null && \
+apt-get -qq -y install apt-utils > /dev/null
 
-RUN neofetch
 
 RUN apt-get -qq -y install wget nano git cron locales locales-all > /dev/null
 
