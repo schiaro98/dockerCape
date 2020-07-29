@@ -394,16 +394,16 @@ function install_suricata() {
     echo '[+] Installing Suricata'
 
     add-apt-repository ppa:oisf/suricata-stable -y
-    apt install suricata -y
+    apt install suricata -y -qq > /dev/null
     touch /etc/suricata/threshold.config
-
-    """
+    echo  """
     You can now start suricata by running as root something like '/usr/bin/suricata -c /etc/suricata//suricata.yaml -i eth0'.
     If a library like libhtp.so is not found, you can run suricata with:
     LD_LIBRARY_PATH=/usr/lib /usr/bin/suricata -c /etc/suricata//suricata.yaml -i eth0
     While rules are installed now, its highly recommended to use a rule manager for maintaining rules.
     The two most common are Oinkmaster and Pulledpork. For a guide see:
     https://redmine.openinfosecfoundation.org/projects/suricata/wiki/Rule_Management_with_Oinkmaster
+    
     """
 
     # Download etupdate to update Emerging Threats Open IDS rules:
@@ -450,8 +450,7 @@ function install_yara() {
 
     echo '[+] Installing Yara'
 
-    apt install -qq -y libtool libjansson-dev libmagic1 
-    libmagic-dev jq autoconf checkinstall > /dev/null
+    apt install -qq -y libtool libjansson-dev libmagic1 libmagic-dev jq autoconf checkinstall > /dev/null
 
     cd /tmp || return
     yara_info=$(curl -s https://api.github.com/repos/VirusTotal/yara/releases/latest)
@@ -466,7 +465,7 @@ function install_yara() {
     cd $directory || return
     ./bootstrap.sh
     ./configure --enable-cuckoo --enable-magic --enable-dotnet --enable-profiling
-    make -j"$(getconf _NPROCESSORS_ONLN)"
+    make -j"$(getconf _NPROCESSORS_ONLN)" | grep 'warning|error|make'
     checkinstall -D --pkgname="yara-$yara_version" --pkgversion="$yara_version|cut -c 2-" --default
     ldconfig
 
@@ -484,10 +483,10 @@ function install_mongo(){
 
     apt update 2>/dev/null
     apt install -y -qq libpcre3-dev > /dev/null
-    apt install -y mongodb-org
+    apt install -y -qq mongodb-org > /dev/null
     pip3 -q install pymongo -U
 
-    apt install -y ntp
+    apt install -y -qq ntp > /dev/null
 
     systemctl start ntp.service &&  systemctl enable ntp.service
 
@@ -572,7 +571,7 @@ function dependencies() {
     apt -qq install python3-pil subversion uwsgi uwsgi-plugin-python3 python3-pyelftools git curl -y > /dev/null
 
     apt -qq install openvpn wireguard -y > /dev/null
-    
+
     # if broken  python -m pip uninstall pip &&  apt install python-pip --reinstall
     #pip3 -q install --upgrade pip
     # /usr/bin/pip
@@ -585,7 +584,7 @@ function dependencies() {
     #config parsers
     pip3 -q install git+https://github.com/Defense-Cyber-Crime-Center/DC3-MWCP.git git+https://github.com/kevthehermit/RATDecoders.git
     # re2
-    apt install libre2-dev -y -qq
+    apt install libre2-dev -y 
     #re2 for py3
     pip3 -q install cython
     pip3 -q install git+https://github.com/andreasvc/pyre2.git
@@ -603,9 +602,9 @@ function dependencies() {
 
     #  su - postgres
     #psql
-     -u postgres -H sh -c "psql -c \"CREATE USER ${USER} WITH PASSWORD '$PASSWD'\"";
-     -u postgres -H sh -c "psql -c \"CREATE DATABASE ${USER}\"";
-     -u postgres -H sh -c "psql -d \"${USER}\" -c \"GRANT ALL PRIVILEGES ON DATABASE ${USER} to ${USER};\""
+     #-u postgres -H sh -c "psql -c \"CREATE USER ${USER} WITH PASSWORD '$PASSWD'\"";
+     #-u postgres -H sh -c "psql -c \"CREATE DATABASE ${USER}\"";
+     #-u postgres -H sh -c "psql -d \"${USER}\" -c \"GRANT ALL PRIVILEGES ON DATABASE ${USER} to ${USER};\""
     #exit
 
     apt install apparmor-utils -y
