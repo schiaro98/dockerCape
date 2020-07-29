@@ -543,8 +543,8 @@ function install_postgresql() {
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc |  apt-key add -
     echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |  tee /etc/apt/sources.list.d/pgdg.list
 
-     apt update -y -qq
-     apt -y -qq install libpq-dev postgresql-12 postgresql-client-12 > /dev/null
+    apt update -y -qq > /dev/null
+    apt -y -qq install libpq-dev postgresql-12 postgresql-client-12 > /dev/null
 
     pip3 -q install psycopg2
 }
@@ -563,21 +563,16 @@ function dependencies() {
     # deps
     apt -qq install python3-pip -y > /dev/null
 
-    apt -qq install psmisc jq sqlite3 tmux net-tools checkinstall graphviz python3-pydot git numactl 
-    python3 python3-dev python3-pip libjpeg-dev zlib1g-dev -y > /dev/null
+    apt -qq install psmisc jq sqlite3 tmux net-tools checkinstall graphviz python3-pydot git numactl python3 python3-dev python3-pip libjpeg-dev zlib1g-dev -y > /dev/null
 
-    apt -qq install upx-ucl libssl-dev wget zip unzip p7zip-full rar unrar 
-    unace-nonfree cabextract geoip-database libgeoip-dev libjpeg-dev mono-utils 
-    ssdeep libfuzzy-dev exiftool -y > /dev/null
+    apt -qq install upx-ucl libssl-dev wget zip unzip p7zip-full rar unrar unace-nonfree cabextract geoip-database libgeoip-dev libjpeg-dev mono-utils ssdeep libfuzzy-dev exiftool -y > /dev/null
 
-    apt -qq install ssdeep uthash-dev libconfig-dev libarchive-dev libtool 
-    autoconf automake privoxy software-properties-common wkhtmltopdf xvfb 
-    xfonts-100dpi tcpdump libcap2-bin -y > /dev/null
+    apt -qq install ssdeep uthash-dev libconfig-dev libarchive-dev libtool autoconf automake privoxy software-properties-common wkhtmltopdf xvfb xfonts-100dpi tcpdump libcap2-bin -y > /dev/null
 
-    apt -qq install python3-pil subversion uwsgi uwsgi-plugin-python3 
-    python3-pyelftools git curl -y > /dev/null
+    apt -qq install python3-pil subversion uwsgi uwsgi-plugin-python3 python3-pyelftools git curl -y > /dev/null
 
     apt -qq install openvpn wireguard -y > /dev/null
+    
     # if broken  python -m pip uninstall pip &&  apt install python-pip --reinstall
     #pip3 -q install --upgrade pip
     # /usr/bin/pip
