@@ -941,21 +941,38 @@ EOL
 fi
 
 
-    systemctl daemon-reload
-    systemctl enable cape-rooter
-    systemctl start cape-rooter
+    # systemctl daemon-reload
+    # systemctl enable cape-rooter
+    # systemctl start cape-rooter
     
-    systemctl enable cape
-    systemctl start cape
+    # systemctl enable cape
+    # systemctl start cape
     
-    systemctl enable cape-processor
-    systemctl start cape-processor
+    # systemctl enable cape-processor
+    # systemctl start cape-processor
     
-    systemctl enable cape-web
-    systemctl start cape-web
+    # systemctl enable cape-web
+    # systemctl start cape-web
     
-    systemctl enable suricata
-    systemctl start suricata
+    # systemctl enable suricata
+    # systemctl start suricata
+
+    service daemon-reload start #idk
+    
+    service cape-rooter enable
+    service cape-rooter start
+
+    service cape enable
+    service cape start
+
+    service cape-processor enable
+    service cape-processor start
+
+    service cape-web enable
+    service cape-web start
+
+    service suricata enable
+    service suricata start
     
 }
 
