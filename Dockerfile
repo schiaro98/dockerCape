@@ -2,11 +2,11 @@ FROM ubuntu:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install apt-utils
+RUN apt-get update && \ 
+apt-get -qq -y upgrade
 
 RUN apt-get -qq -y install wget nano git cron locales locales-all \
 apt-utils neofetch
-#timedatectl???
 
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
