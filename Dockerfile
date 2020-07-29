@@ -2,7 +2,7 @@ FROM ubuntu:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update
+RUN apt-get update && apt-get install apt-utils
 
 RUN apt-get -qq -y install wget nano git cron locales locales-all \
 apt-utils neofetch
@@ -22,11 +22,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
 #RUN echo "XKBMODEL="pc105"  XKBLAYOUT="it" \
 #XKBVARIANT=""  XKBOPTIONS=""" >> /etc/default/keyboard
 
-RUN git clone https://github.com/kevoreilly/CAPEv2
-
-RUN git clone https://github.com/doomedraven/Tools/
-
-RUN git clone https://github.com/schiaro98/dockerCape
+RUN git clone https://github.com/kevoreilly/CAPEv2 && \
+ git clone https://github.com/doomedraven/Tools/ && \
+ git clone https://github.com/schiaro98/dockerCape
 
 RUN cd dockerCape && chmod +x build.sh && ./build.sh base cape
 
@@ -35,5 +33,3 @@ RUN cd dockerCape && chmod +x build.sh && ./build.sh base cape
 RUN  rm /tmp/VirusTotal-yara-7d82fa0/yara-v4.0.2_4.0.2-1_amd64.deb
 
 CMD ["bash"]
-
-#bash can be substitued by CMD ["python3 /CAPEv2/cuckoo.py"]
