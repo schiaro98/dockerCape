@@ -22,18 +22,18 @@ nginx_version=1.18.0
 function issues() {
 cat << EOI
 Problems with PyOpenSSL?
-    sudo rm -rf /usr/local/lib/python3.8/dist-packages/OpenSSL/
-    sudo rm -rf /home/${USER}/.local/lib/python3.8/site-packages/OpenSSL/
-    sudo apt install --reinstall python-openssl
+     rm -rf /usr/local/lib/python3.8/dist-packages/OpenSSL/
+     rm -rf /home/${USER}/.local/lib/python3.8/site-packages/OpenSSL/
+     apt install --reinstall python-openssl
 Problem with PIP?
-    sudo python -m pip3 uninstall pip3 && sudo apt install python3-pip --reinstall
+     python -m pip3 uninstall pip3 &&  apt install python3-pip --reinstall
 Problem with pillow:
     * ValueError: jpeg is required unless explicitly disabled using --disable-jpeg, aborting
     * ValueError: zlib is required unless explicitly disabled using --disable-zlib, aborting
 Solution:
     # https://askubuntu.com/a/1094768
     # you may need to adjust version of libjpeg-turbo8
-    sudo apt install zlib1g-dev libjpeg-turbo8-dev libjpeg-turbo8=1.5.2-0ubuntu5
+     apt install zlib1g-dev libjpeg-turbo8-dev libjpeg-turbo8=1.5.2-0ubuntu5
 EOI
 }
 
@@ -86,14 +86,14 @@ function install_nginx() {
     # OpenSSL version 1.1.0h
     wget https://www.openssl.org/source/openssl-1.1.0h.tar.gz && tar xzvf openssl-1.1.0h.tar.gz
 
-    sudo add-apt-repository -y ppa:maxmind/ppa
-    sudo apt update && sudo apt upgrade -y
-    sudo apt install -y perl libperl-dev libgd3 libgd-dev libgeoip1 libgeoip-dev geoip-bin libxml2 libxml2-dev libxslt1.1 libxslt1-dev
+     add-apt-repository -y ppa:maxmind/ppa
+     apt update &&  apt upgrade -y
+     apt install -y perl libperl-dev libgd3 libgd-dev libgeoip1 libgeoip-dev geoip-bin libxml2 libxml2-dev libxslt1.1 libxslt1-dev
 
     cd nginx-$nginx_version
 
-    sudo cp nginx-$nginx_version/man/nginx.8 /usr/share/man/man8
-    sudo gzip /usr/share/man/man8/nginx.8
+     cp nginx-$nginx_version/man/nginx.8 /usr/share/man/man8
+     gzip /usr/share/man/man8/nginx.8
     ls /usr/share/man/man8/ | grep nginx.8.gz
 
     ./configure --prefix=/usr/share/nginx \
@@ -150,15 +150,15 @@ function install_nginx() {
 
 make -j$(nproc)
     checkinstall -D --pkgname="nginx-$nginx_version" --pkgversion="$nginx_version" --default
-    sudo ln -s /usr/lib/nginx/modules /etc/nginx/modules
-    sudo adduser --system --home /nonexistent --shell /bin/false --no-create-home --disabled-login --disabled-password --gecos "nginx user" --group nginx
+     ln -s /usr/lib/nginx/modules /etc/nginx/modules
+     adduser --system --home /nonexistent --shell /bin/false --no-create-home --disabled-login --disabled-password --gecos "nginx user" --group nginx
 
-    sudo mkdir -p /var/cache/nginx/client_temp /var/cache/nginx/fastcgi_temp /var/cache/nginx/proxy_temp /var/cache/nginx/scgi_temp /var/cache/nginx/uwsgi_temp
-    sudo chmod 700 /var/cache/nginx/*
-    sudo chown nginx:root /var/cache/nginx/*
+     mkdir -p /var/cache/nginx/client_temp /var/cache/nginx/fastcgi_temp /var/cache/nginx/proxy_temp /var/cache/nginx/scgi_temp /var/cache/nginx/uwsgi_temp
+     chmod 700 /var/cache/nginx/*
+     chown nginx:root /var/cache/nginx/*
 
     if [ ! -f /etc/systemd/system/nginx.service ]; then
-        sudo cat >> /etc/systemd/system/nginx.service << EOF
+         cat >> /etc/systemd/system/nginx.service << EOF
 [Unit]
 Description=nginx - high performance web server
 Documentation=https://nginx.org/en/docs/
@@ -176,17 +176,17 @@ WantedBy=multi-user.target
 EOF
     fi
 
-    sudo systemctl enable nginx.service
-    sudo systemctl start nginx.service
-    sudo systemctl is-enabled nginx.service
+     systemctl enable nginx.service
+     systemctl start nginx.service
+     systemctl is-enabled nginx.service
 
-    sudo mkdir /etc/nginx/{conf.d,snippets,sites-available,sites-enabled}
-    sudo chmod 640 /var/log/nginx/*
-    sudo chown nginx:adm /var/log/nginx/access.log /var/log/nginx/error.log
+     mkdir /etc/nginx/{conf.d,snippets,sites-available,sites-enabled}
+     chmod 640 /var/log/nginx/*
+     chown nginx:adm /var/log/nginx/access.log /var/log/nginx/error.log
 
 
     if [ ! -f /etc/logrotate.d/nginx ]; then
-        sudo cat >> /etc/logrotate.d/nginx << EOF
+         cat >> /etc/logrotate.d/nginx << EOF
 /var/log/nginx/*.log {
     daily
     missingok
@@ -205,8 +205,8 @@ EOF
 EOF
 fi
 
-    sudo ln -s /etc/nginx/sites-available/$1 /etc/nginx/sites-enabled/
-    #sudo wget https://support.cloudflare.com/hc/en-us/article_attachments/201243967/origin-pull-ca.pem -O
+     ln -s /etc/nginx/sites-available/$1 /etc/nginx/sites-enabled/
+    # wget https://support.cloudflare.com/hc/en-us/article_attachments/201243967/origin-pull-ca.pem -O
 
     if [ ! -f /etc/nginx/sites-enabled/capesandbox ]; then
         cat >> /etc/nginx/sites-enabled/capesandbox << EOF
@@ -274,18 +274,18 @@ fi
 }
 
 function install_letsencrypt(){
-    sudo add-apt-repository ppa:certbot/certbot -y
-    sudo apt update
-    sudo apt install python3-certbot-nginx -y
-    sudo echo "server_name $1 www.$1;" > /etc/nginx/sites-available/$1
-    sudo certbot --nginx -d $1 -d www.$1
+     add-apt-repository ppa:certbot/certbot -y
+     apt update
+     apt install python3-certbot-nginx -y
+     echo "server_name $1 www.$1;" > /etc/nginx/sites-available/$1
+     certbot --nginx -d $1 -d www.$1
 }
 
 function install_fail2ban() {
-    sudo apt install fail2ban -y
+     apt install fail2ban -y
 
-    sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-    sudo sed -i /etc/fail2ban/jail.local
+     cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+     sed -i /etc/fail2ban/jail.local
 
     systemctl start fail2ban
     systemctl enable fail2ban
@@ -318,26 +318,26 @@ function install_logrotate() {
 EOF
     fi
 
-    sudo /usr/sbin/logrotate --force /etc/logrotate.conf
+     /usr/sbin/logrotate --force /etc/logrotate.conf
     du -sh /var/log/* | sort -hr | head -n10
     # wipe kern.log
-    # cat /dev/null | sudo tee /var/log/kern.log
+    # cat /dev/null |  tee /var/log/kern.log
 }
 
 function redsocks2() {
     cd /tmp || return
-    sudo apt install -y git libevent-dev libreadline-dev zlib1g-dev libncurses5-dev
-    sudo apt install -y libssl1.0-dev 2>/dev/null
-    sudo apt install -y libssl-dev 2>/dev/null
+     apt install -y git libevent-dev libreadline-dev zlib1g-dev libncurses5-dev
+     apt install -y libssl1.0-dev 2>/dev/null
+     apt install -y libssl-dev 2>/dev/null
     git clone https://github.com/semigodking/redsocks redsocks2 && cd redsocks2
     DISABLE_SHADOWSOCKS=true make -j$(nproc) #ENABLE_STATIC=true
-    sudo cp redsocks2 /usr/bin/
+     cp redsocks2 /usr/bin/
 }
 
 function distributed() {
-    sudo apt install uwsgi -y 2>/dev/null
-    sudo mkdir -p /data/{config,}db
-    sudo chown mongodb:mongodb /data/ -R
+     apt install uwsgi -y 2>/dev/null
+     mkdir -p /data/{config,}db
+     chown mongodb:mongodb /data/ -R
     cat >> /etc/uwsgi/apps-available/sandbox_api.ini << EOL
 [uwsgi]
     plugins = python
@@ -409,7 +409,7 @@ function install_suricata() {
     # Download etupdate to update Emerging Threats Open IDS rules:
     pip3 -q install suricata-update
     mkdir -p "/etc/suricata/rules"
-    crontab -l | { cat; echo "15 * * * * sudo /usr/bin/suricata-update --suricata /usr/bin/suricata --suricata-conf /etc/suricata/suricata.yaml -o /etc/suricata/rules/"; } | crontab -
+    crontab -l | { cat; echo "15 * * * *  /usr/bin/suricata-update --suricata /usr/bin/suricata --suricata-conf /etc/suricata/suricata.yaml -o /etc/suricata/rules/"; } | crontab -
     crontab -l | { cat; echo "15 * * * * /usr/bin/suricatasc -c reload-rules /tmp/suricata-command.socket"; } | crontab -
 
     if [ -d /usr/share/suricata/rules/ ]; then
@@ -446,7 +446,7 @@ function install_suricata() {
 
 function install_yara() {
     echo '[+] Checking for old YARA version to uninstall'
-    dpkg -l|grep "yara-v[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}"|cut -d " " -f 3|sudo xargs dpkg --purge --force-all 2>/dev/null
+    dpkg -l|grep "yara-v[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}"|cut -d " " -f 3| xargs dpkg --purge --force-all 2>/dev/null
 
     echo '[+] Installing Yara'
 
@@ -479,8 +479,8 @@ function install_mongo(){
     echo "[+] Installing MongoDB"
 
     # $(lsb_release -cs) on 20.04 they uses 18.04 repo
-    wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add -
-    echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb.list
+    wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc |  apt-key add -
+    echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" |  tee /etc/apt/sources.list.d/mongodb.list
 
     apt update 2>/dev/null
     apt install -y -qq libpcre3-dev > /dev/null
@@ -489,10 +489,10 @@ function install_mongo(){
 
     apt install -y ntp
 
-    systemctl start ntp.service && sudo systemctl enable ntp.service
+    systemctl start ntp.service &&  systemctl enable ntp.service
 
     if ! grep -q -E '^kernel/mm/transparent_hugepage/enabled' /etc/sysfs.conf; then
-        sudo apt install sysfsutils -y
+         apt install sysfsutils -y
         echo "kernel/mm/transparent_hugepage/enabled = never" >> /etc/sysfs.conf
         echo "kernel/mm/transparent_hugepage/defrag = never" >> /etc/sysfs.conf
     fi
@@ -530,7 +530,7 @@ SyslogIdentifier=mongodb
 WantedBy=multi-user.target
 EOF
     fi
-    sudo mkdir -p /data/{config,}db
+     mkdir -p /data/{config,}db
     systemctl enable mongodb.service
     systemctl restart mongodb.service
 
@@ -540,11 +540,11 @@ EOF
 function install_postgresql() {
     echo "[+] Installing PostgreSQL 12"
 
-    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-    echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc |  apt-key add -
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |  tee /etc/apt/sources.list.d/pgdg.list
 
-    sudo apt update -y -qq
-    sudo apt -y -qq install libpq-dev postgresql-12 postgresql-client-12 > /dev/null
+     apt update -y -qq
+     apt -y -qq install libpq-dev postgresql-12 postgresql-client-12 > /dev/null
 
     pip3 -q install psycopg2
 }
@@ -552,13 +552,13 @@ function install_postgresql() {
 function dependencies() {
     echo "[+] Installing dependencies"
 
-    timedatectl set-timezone UTC
+    #timedatectl set-timezone UTC
     export LANGUAGE=
     export LANG=it_IT.utf8
     export LC_ALL=
 
-    #sudo snap install canonical-livepatch
-    #sudo canonical-livepatch enable APITOKEN
+    # snap install canonical-livepatch
+    # canonical-livepatch enable APITOKEN
 
     # deps
     apt -qq install python3-pip -y > /dev/null
@@ -578,7 +578,7 @@ function dependencies() {
     python3-pyelftools git curl -y > /dev/null
 
     apt -qq install openvpn wireguard -y > /dev/null
-    # if broken sudo python -m pip uninstall pip && sudo apt install python-pip --reinstall
+    # if broken  python -m pip uninstall pip &&  apt install python-pip --reinstall
     #pip3 -q install --upgrade pip
     # /usr/bin/pip
     # from pip import __main__
@@ -606,11 +606,11 @@ function dependencies() {
 
     install_postgresql
 
-    # sudo su - postgres
+    #  su - postgres
     #psql
-    sudo -u postgres -H sh -c "psql -c \"CREATE USER ${USER} WITH PASSWORD '$PASSWD'\"";
-    sudo -u postgres -H sh -c "psql -c \"CREATE DATABASE ${USER}\"";
-    sudo -u postgres -H sh -c "psql -d \"${USER}\" -c \"GRANT ALL PRIVILEGES ON DATABASE ${USER} to ${USER};\""
+     -u postgres -H sh -c "psql -c \"CREATE USER ${USER} WITH PASSWORD '$PASSWD'\"";
+     -u postgres -H sh -c "psql -c \"CREATE DATABASE ${USER}\"";
+     -u postgres -H sh -c "psql -d \"${USER}\" -c \"GRANT ALL PRIVILEGES ON DATABASE ${USER} to ${USER};\""
     #exit
 
     apt install apparmor-utils -y
@@ -627,12 +627,12 @@ function dependencies() {
     # https://www.torproject.org/docs/debian.html.en
     echo "deb http://deb.torproject.org/torproject.org $(lsb_release -cs) main" >> /etc/apt/sources.list
     echo "deb-src http://deb.torproject.org/torproject.org $(lsb_release -cs) main" >> /etc/apt/sources.list
-    sudo apt install gnupg2 -y -qq > /dev/null
+     apt install gnupg2 -y -qq > /dev/null
     gpg --keyserver keys.gnupg.net --recv A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
     #gpg2 --recv A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
     #gpg2 --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
-    wget -qO - https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc | sudo apt-key add -
-    sudo apt update 2>/dev/null
+    wget -qO - https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc |  apt-key add -
+     apt update 2>/dev/null
     apt install tor deb.torproject.org-keyring libzstd1 -y -qq > /dev/null
 
     sed -i 's/#RunAsDaemon 1/RunAsDaemon 1/g' /etc/tor/torrc
@@ -644,11 +644,11 @@ NumCPUs $(getconf _NPROCESSORS_ONLN)
 EOF
 
     #Then restart Tor:
-    sudo systemctl enable tor
-    sudo systemctl start tor
+     systemctl enable tor
+     systemctl start tor
 
     #Edit the Privoxy configuration
-    #sudo sed -i 's/R#        forward-socks5t             /     127.0.0.1:9050 ./        forward-socks5t             /     127.0.0.1:9050 ./g' /etc/privoxy/config
+    # sed -i 's/R#        forward-socks5t             /     127.0.0.1:9050 ./        forward-socks5t             /     127.0.0.1:9050 ./g' /etc/privoxy/config
     #service privoxy restart
 
     echo "* soft nofile 1048576" >> /etc/security/limits.conf
@@ -663,17 +663,17 @@ EOF
     echo "net.bridge.bridge-nf-call-iptables = 0" >> /etc/sysctl.conf
     echo "net.bridge.bridge-nf-call-arptables = 0" >> /etc/sysctl.conf
 
-    sudo sysctl -p
+     sysctl -p
 
     ### PDNS
-    sudo apt install git binutils-dev libldns-dev libpcap-dev libdate-simple-perl libdatetime-perl libdbd-mysql-perl -y
+     apt install git binutils-dev libldns-dev libpcap-dev libdate-simple-perl libdatetime-perl libdbd-mysql-perl -y
     cd /tmp || return
     git clone git://github.com/gamelinux/passivedns.git
     cd passivedns/ || return
     autoreconf --install
     ./configure
     make -j"$(getconf _NPROCESSORS_ONLN)"
-    sudo checkinstall -D --pkgname=passivedns --default
+     checkinstall -D --pkgname=passivedns --default
 
     #Depricated as py2 only
     :"
@@ -690,10 +690,10 @@ EOF
     cd .. && rm -r lzmat
     cd /tmp || return
     git clone https://github.com/unicorn-engine/unicorn.git
-    sudo apt install libglib2.0-dev -y
+     apt install libglib2.0-dev -y
     cd unicorn || return
     ./make.sh
-    sudo ./make.sh install
+     ./make.sh install
     "
 
     pip3 -q install unicorn capstone
@@ -822,10 +822,10 @@ EOF
     chown root:root /usr/share/clamav-unofficial-sigs/conf.d/00-clamav-unofficial-sigs.conf
     chmod 644 /usr/share/clamav-unofficial-sigs/conf.d/00-clamav-unofficial-sigs.conf
     usermod -a -G ${USER} clamav
-    echo "/opt/CAPEv2/storage/** r," | sudo tee -a /etc/apparmor.d/local/usr.sbin.clamd
-    sudo systemctl enable clamav-daemon
-    sudo systemctl start clamav-daemon
-    sudo -u clamav /usr/sbin/clamav-unofficial-sigs
+    echo "/opt/CAPEv2/storage/** r," |  tee -a /etc/apparmor.d/local/usr.sbin.clamd
+     systemctl enable clamav-daemon
+     systemctl start clamav-daemon
+     -u clamav /usr/sbin/clamav-unofficial-sigs
 }
 
 function install_CAPE() {
@@ -953,40 +953,22 @@ WantedBy=multi-user.target
 EOL
 fi
 
-
-    # systemctl daemon-reload
-    # systemctl enable cape-rooter
-    # systemctl start cape-rooter
+    systemctl daemon-reload
+    systemctl enable cape-rooter
+    systemctl start cape-rooter
     
-    # systemctl enable cape
-    # systemctl start cape
+    systemctl enable cape
+    systemctl start cape
     
-    # systemctl enable cape-processor
-    # systemctl start cape-processor
+    systemctl enable cape-processor
+    systemctl start cape-processor
     
-    # systemctl enable cape-web
-    # systemctl start cape-web
+    systemctl enable cape-web
+    systemctl start cape-web
     
-    # systemctl enable suricata
-    # systemctl start suricata
+    systemctl enable suricata
+    systemctl start suricata
 
-    service daemon-reload.service start #idk
-    
-    service cape-rooter.service enable
-    service cape-rooter.service start
-
-    service cape.service enable
-    service cape.service start
-
-    service cape-processor.service enable
-    service cape-processor.service start
-
-    service cape-web.service enable
-    service cape-web.service start
-
-    service suricata.service enable
-    service suricata.service start
-    
 }
 
 function supervisor() {
@@ -1091,8 +1073,8 @@ EOF
     # include conf.d
     python3 -c "pa = '/etc/supervisor/supervisord.conf';q=open(pa, 'r').read().replace(';[include]\n;files = relative/directory/*.ini', '[include]\nfiles = conf.d/cape.conf');open(pa, 'w').write(q);"
 
-    sudo systemctl enable supervisor
-    sudo systemctl start supervisor
+    systemctl enable supervisor
+    systemctl start supervisor
 
     #supervisord -c /etc/supervisor/supervisord.conf
     supervisorctl -c /etc/supervisor/supervisord.conf reload
