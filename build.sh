@@ -601,8 +601,8 @@ function dependencies() {
 
     pip3 install "django>3" git+https://github.com/jsocol/django-ratelimit.git
     pip3 install sqlalchemy sqlalchemy-utils jinja2 markupsafe bottle chardet pygal rarfile jsbeautifier dpkt nose dnspython pytz requests[socks] python-magic geoip java-random python-whois bs4 pype32-py3 git+https://github.com/kbandla/pydeep.git flask flask-restful flask-sqlalchemy pyvmomi
-    apt install -y openjdk-11-jdk-headless -qq
-    apt install -y openjdk-8-jdk-headless -qq
+    apt install -y openjdk-11-jdk-headless -qq > /dev/null
+    apt install -y openjdk-8-jdk-headless -qq > /dev/null
 
     install_postgresql
 
@@ -627,13 +627,13 @@ function dependencies() {
     # https://www.torproject.org/docs/debian.html.en
     echo "deb http://deb.torproject.org/torproject.org $(lsb_release -cs) main" >> /etc/apt/sources.list
     echo "deb-src http://deb.torproject.org/torproject.org $(lsb_release -cs) main" >> /etc/apt/sources.list
-    sudo apt install gnupg2 -y
+    sudo apt install gnupg2 -y -qq > /dev/null
     gpg --keyserver keys.gnupg.net --recv A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
     #gpg2 --recv A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
     #gpg2 --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
     wget -qO - https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc | sudo apt-key add -
     sudo apt update 2>/dev/null
-    apt install tor deb.torproject.org-keyring libzstd1 -y
+    apt install tor deb.torproject.org-keyring libzstd1 -y -qq > /dev/null
 
     sed -i 's/#RunAsDaemon 1/RunAsDaemon 1/g' /etc/tor/torrc
 
@@ -970,22 +970,22 @@ fi
     # systemctl enable suricata
     # systemctl start suricata
 
-    service daemon-reload start #idk
+    service daemon-reload.service start #idk
     
-    service cape-rooter enable
-    service cape-rooter start
+    service cape-rooter.service enable
+    service cape-rooter.service start
 
-    service cape enable
-    service cape start
+    service cape.service enable
+    service cape.service start
 
-    service cape-processor enable
-    service cape-processor start
+    service cape-processor.service enable
+    service cape-processor.service start
 
-    service cape-web enable
-    service cape-web start
+    service cape-web.service enable
+    service cape-web.service start
 
-    service suricata enable
-    service suricata start
+    service suricata.service enable
+    service suricata.service start
     
 }
 
@@ -1134,11 +1134,11 @@ OS="$(uname -s)"
 case "$COMMAND" in
 'base')
     dependencies
+    install_systemd
     install_mongo
     install_suricata
     install_yara
     install_CAPE
-    install_systemd
     crontab -l | { cat; echo "@reboot cd /opt/CAPEv2/utils/ && ./smtp_sinkhole.sh"; } | crontab -
     ;;
 'all')

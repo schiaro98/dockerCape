@@ -4,10 +4,11 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -qq -y update && \ 
 apt-get -qq -y upgrade && \
-apt-get -qq -yinstall apt-utils
+apt-get -qq -y install apt-utils neofetch > /dev/null
 
-RUN apt-get -qq -y install wget nano git cron locales locales-all \
-apt-utils neofetch
+RUN neofetch
+
+RUN apt-get -qq -y install wget nano git cron locales locales-all > /dev/null
 
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -28,9 +29,5 @@ RUN git clone https://github.com/kevoreilly/CAPEv2 && \
  git clone https://github.com/schiaro98/dockerCape
 
 RUN cd dockerCape && chmod +x build.sh && ./build.sh base cape
-
-#For cleaning
-#RUN dpkg -r yara-v4.0.2 don't do it it is dangerous
-RUN  rm /tmp/VirusTotal-yara-7d82fa0/yara-v4.0.2_4.0.2-1_amd64.deb
 
 CMD ["bash"]
