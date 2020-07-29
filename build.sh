@@ -148,7 +148,7 @@ function install_nginx() {
                 --with-cc-opt='-g -O2 -fPIE -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2' \
                 --with-ld-opt='-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now'
 
-make -j$(nproc)
+make -s -j$(nproc)
     checkinstall -D --pkgname="nginx-$nginx_version" --pkgversion="$nginx_version" --default
      ln -s /usr/lib/nginx/modules /etc/nginx/modules
      adduser --system --home /nonexistent --shell /bin/false --no-create-home --disabled-login --disabled-password --gecos "nginx user" --group nginx
@@ -330,7 +330,7 @@ function redsocks2() {
      apt install -y libssl1.0-dev 2>/dev/null
      apt install -y libssl-dev 2>/dev/null
     git clone https://github.com/semigodking/redsocks redsocks2 && cd redsocks2
-    DISABLE_SHADOWSOCKS=true make -j$(nproc) #ENABLE_STATIC=true
+    DISABLE_SHADOWSOCKS=true make -s -j$(nproc) #ENABLE_STATIC=true
      cp redsocks2 /usr/bin/
 }
 
@@ -465,7 +465,7 @@ function install_yara() {
     cd $directory || return
     ./bootstrap.sh
     ./configure --enable-cuckoo --enable-magic --enable-dotnet --enable-profiling
-    make -j"$(getconf _NPROCESSORS_ONLN)" | grep 'warning|error|make'
+    make -s -j"$(getconf _NPROCESSORS_ONLN)"
     checkinstall -D --pkgname="yara-$yara_version" --pkgversion="$yara_version|cut -c 2-" --default
     ldconfig
 
@@ -666,7 +666,7 @@ EOF
     cd passivedns/ || return
     autoreconf --install
     ./configure
-    make -j"$(getconf _NPROCESSORS_ONLN)"
+    make -s -j"$(getconf _NPROCESSORS_ONLN)"
      checkinstall -D --pkgname=passivedns --default
 
     #Depricated as py2 only
@@ -1115,6 +1115,7 @@ case "$COMMAND" in
     install_suricata
     install_yara
     install_CAPE
+    install_mongo
     crontab -l | { cat; echo "@reboot cd /opt/CAPEv2/utils/ && ./smtp_sinkhole.sh"; } | crontab -
     ;;
 'all')
