@@ -28,7 +28,7 @@ RUN git clone https://github.com/doomedraven/Tools/
 
 RUN git clone https://github.com/schiaro98/dockerCape
 
-RUN chmod +x build.sh && ./build.sh 
+RUN cd dockerCape && chmod +x build.sh && ./build.sh 
 
 #For cleaning
 #RUN dpkg -r yara-v4.0.2 don't do it it is dangerous
