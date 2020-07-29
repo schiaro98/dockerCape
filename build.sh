@@ -450,7 +450,8 @@ function install_yara() {
 
     echo '[+] Installing Yara'
 
-    apt install libtool libjansson-dev libmagic1 libmagic-dev jq autoconf checkinstall -y
+    apt install -qq -y libtool libjansson-dev libmagic1 
+    libmagic-dev jq autoconf checkinstall > /dev/null
 
     cd /tmp || return
     yara_info=$(curl -s https://api.github.com/repos/VirusTotal/yara/releases/latest)
@@ -482,11 +483,12 @@ function install_mongo(){
     echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb.list
 
     apt update 2>/dev/null
-    apt install libpcre3-dev -y
+    apt install -y -qq libpcre3-dev > /dev/null
     apt install -y mongodb-org
     pip3 install pymongo -U
 
     apt install -y ntp
+
     systemctl start ntp.service && sudo systemctl enable ntp.service
 
     if ! grep -q -E '^kernel/mm/transparent_hugepage/enabled' /etc/sysfs.conf; then
@@ -541,8 +543,8 @@ function install_postgresql() {
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
     echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
 
-    sudo apt update -y
-    sudo apt -y install libpq-dev postgresql-12 postgresql-client-12
+    sudo apt update -y -qq
+    sudo apt -y -qq install libpq-dev postgresql-12 postgresql-client-12 > /dev/null
 
     pip3 install psycopg2
 }
@@ -559,12 +561,23 @@ function dependencies() {
     #sudo canonical-livepatch enable APITOKEN
 
     # deps
-    apt -qq install python3-pip -y
-    apt -qq install psmisc jq sqlite3 tmux net-tools checkinstall graphviz python3-pydot git numactl python3 python3-dev python3-pip libjpeg-dev zlib1g-dev -y
-    apt -qq install upx-ucl libssl-dev wget zip unzip p7zip-full rar unrar unace-nonfree cabextract geoip-database libgeoip-dev libjpeg-dev mono-utils ssdeep libfuzzy-dev exiftool -y
-    apt -qq install ssdeep uthash-dev libconfig-dev libarchive-dev libtool autoconf automake privoxy software-properties-common wkhtmltopdf xvfb xfonts-100dpi tcpdump libcap2-bin -y
-    apt -qq install python3-pil subversion uwsgi uwsgi-plugin-python3 python3-pyelftools git curl -y
-    apt -qq install openvpn wireguard -y
+    apt -qq install python3-pip -y > /dev/null
+
+    apt -qq install psmisc jq sqlite3 tmux net-tools checkinstall graphviz python3-pydot git numactl 
+    python3 python3-dev python3-pip libjpeg-dev zlib1g-dev -y > /dev/null
+
+    apt -qq install upx-ucl libssl-dev wget zip unzip p7zip-full rar unrar 
+    unace-nonfree cabextract geoip-database libgeoip-dev libjpeg-dev mono-utils 
+    ssdeep libfuzzy-dev exiftool -y > /dev/null
+
+    apt -qq install ssdeep uthash-dev libconfig-dev libarchive-dev libtool 
+    autoconf automake privoxy software-properties-common wkhtmltopdf xvfb 
+    xfonts-100dpi tcpdump libcap2-bin -y > /dev/null
+
+    apt -qq install python3-pil subversion uwsgi uwsgi-plugin-python3 
+    python3-pyelftools git curl -y > /dev/null
+
+    apt -qq install openvpn wireguard -y > /dev/null
     # if broken sudo python -m pip uninstall pip && sudo apt install python-pip --reinstall
     #pip3 install --upgrade pip
     # /usr/bin/pip
@@ -577,7 +590,7 @@ function dependencies() {
     #config parsers
     pip3 install git+https://github.com/Defense-Cyber-Crime-Center/DC3-MWCP.git git+https://github.com/kevthehermit/RATDecoders.git
     # re2
-    apt install libre2-dev -y
+    apt install libre2-dev -y -qq
     #re2 for py3
     pip3 install cython
     pip3 install git+https://github.com/andreasvc/pyre2.git
@@ -588,8 +601,8 @@ function dependencies() {
 
     pip3 install "django>3" git+https://github.com/jsocol/django-ratelimit.git
     pip3 install sqlalchemy sqlalchemy-utils jinja2 markupsafe bottle chardet pygal rarfile jsbeautifier dpkt nose dnspython pytz requests[socks] python-magic geoip java-random python-whois bs4 pype32-py3 git+https://github.com/kbandla/pydeep.git flask flask-restful flask-sqlalchemy pyvmomi
-    apt install -y openjdk-11-jdk-headless
-    apt install -y openjdk-8-jdk-headless
+    apt install -y openjdk-11-jdk-headless -qq
+    apt install -y openjdk-8-jdk-headless -qq
 
     install_postgresql
 
