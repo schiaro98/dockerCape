@@ -2,7 +2,7 @@ FROM ubuntu:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -qq -y update /dev/null && \ 
+RUN apt-get -qq -y update > /dev/null && \ 
 apt-get -qq -y upgrade > /dev/null && \
 apt-get -qq -y install apt-utils > /dev/null
 
